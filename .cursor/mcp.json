@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "boletin-oficial": {
+      "command": "C:\\Users\\gonza\\Desktop\\MCP\\boletin-oficial-mcp\\.venv\\Scripts\\python.exe",
+      "args": ["-m", "boletin_oficial_mcp.server"],
+      "cwd": "C:\\Users\\gonza\\Desktop\\MCP\\boletin-oficial-mcp"
+    }
+  }
+}
