@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from playwright.sync_api import BrowserContext, Playwright, sync_playwright
 
-DATA_DIR = Path.home() / ".boletin-oficial-mcp"
+DATA_DIR = Path(os.environ.get("BOLETIN_MCP_HOME") or (Path.home() / ".boletin-oficial-mcp"))
 BROWSER_DIR = DATA_DIR / "browser"
 DEBUG_DIR = DATA_DIR / "debug"
 
@@ -30,6 +31,20 @@ def debug_dir() -> Path:
     return DEBUG_DIR
 
 
+def _chromium_args() -> list[str]:
+    args = ["--disable-blink-features=AutomationControlled"]
+    if os.environ.get("RAILWAY_ENVIRONMENT") or Path("/.dockerenv").exists():
+        args.extend(
+            [
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--disable-software-rasterizer",
+            ]
+        )
+    return args
+
+
 def get_context() -> BrowserContext:
     """Reusa un perfil persistente para pasar el challenge F5 del sitio."""
     global _playwright, _context
@@ -44,7 +59,7 @@ def get_context() -> BrowserContext:
         timezone_id="America/Argentina/Buenos_Aires",
         user_agent=USER_AGENT,
         viewport={"width": 1400, "height": 900},
-        args=["--disable-blink-features=AutomationControlled"],
+        args=_chromium_args(),
     )
     return _context
 
